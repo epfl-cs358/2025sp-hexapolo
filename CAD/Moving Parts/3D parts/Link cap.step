@@ -9,8 +9,8 @@ FILE_DESCRIPTION(
 /* implementation_level */ '2;1');
 
 FILE_NAME(
-/* name */ 'Rotary base.step',
-/* time_stamp */ '2025-04-13T15:20:13+02:00',
+/* name */ 'Link cap.step',
+/* time_stamp */ '2025-04-13T15:24:15+02:00',
 /* author */ (''),
 /* organization */ (''),
 /* preprocessor_version */ 'ST-DEVELOPER v20.1',
@@ -87,16 +87,15 @@ SOLID_ANGLE_UNIT()
 #36=PRODUCT_DEFINITION_SHAPE('',$,#39);
 #37=SHAPE_REPRESENTATION('',(#23),#29);
 #38=PRODUCT_DEFINITION_CONTEXT('part definition',#43,'design');
-#39=PRODUCT_DEFINITION('Upper collar','Rotary base v2',#40,#38);
+#39=PRODUCT_DEFINITION('Link cap','Link cap v1',#40,#38);
 #40=PRODUCT_DEFINITION_FORMATION('',$,#45);
-#41=PRODUCT_RELATED_PRODUCT_CATEGORY('Rotary base v2','Rotary base v2',
-(#45));
+#41=PRODUCT_RELATED_PRODUCT_CATEGORY('Link cap v1','Link cap v1',(#45));
 #42=APPLICATION_PROTOCOL_DEFINITION('international standard',
 'automotive_design',2009,#43);
 #43=APPLICATION_CONTEXT(
 'Core Data for Automotive Mechanical Design Process');
 #44=PRODUCT_CONTEXT('part definition',#43,'mechanical');
-#45=PRODUCT('Upper collar','Rotary base v2',$,(#44));
+#45=PRODUCT('Link cap','Link cap v1',$,(#44));
 #46=PRESENTATION_STYLE_ASSIGNMENT((#47));
 #47=SURFACE_STYLE_USAGE(.BOTH.,#48);
 #48=SURFACE_SIDE_STYLE('',(#49));
