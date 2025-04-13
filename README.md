@@ -1,1 +1,1 @@
-# 2025sp-at-tepfl
+# 2025sp-hexapolo
