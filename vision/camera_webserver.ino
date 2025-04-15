@@ -17,6 +17,8 @@
 // ===================
 #define CAMERA_MODEL_AI_THINKER // Has PSRAM
 #include "camera_pins.h"
+// Store wifi password in separate file to not expose it when pushing to git
+#include "wifi_password.h"
 
 // #define WIFI_SSID ENV_WIFI_SSID
 // #define WIFI_PASSWORD ENV_WIFI_PASSWORD
@@ -25,7 +27,7 @@
 //  ===========================
 // Check issue #32 comment on using IOT WiFi
 const char *ssid = "SPOT-iot";
-const char *password = "";
+const char *password = WIFI_PASSWORD;
 
 void startCameraServer();
 void setupLedFlash(int pin);
