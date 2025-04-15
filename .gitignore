@@ -1,3 +1,4 @@
 # Build files
 /build
 **/build/
+*/wifi_password.h
