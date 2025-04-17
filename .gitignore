@@ -1,4 +1,13 @@
 # Build files
 /build
 **/build/
+
+# WiFi password
 */wifi_password.h
+
+# Cache
+**/__pycache__/
+
+# AI models
+*/yolo11n.pt
+*/yolov8n.pt
