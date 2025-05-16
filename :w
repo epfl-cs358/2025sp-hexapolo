@@ -21,7 +21,7 @@ def backward(duration=1, speed=1):
 def turn(angle, speed=1):
     """Turn by specified angle in degrees (positive=right, negative=left)"""
     # Convert angle to time-based turn (simplified approach)
-    turn_time = abs(angle) / 55 * 0.5  # 0.5s per 90 degrees
+    turn_time = abs(angle) / 90 * 0.5  # 0.5s per 90 degrees
     
     if angle > 0:
         turn_motor.forward(speed)  # Right turn
