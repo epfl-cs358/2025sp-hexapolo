@@ -66,6 +66,7 @@ if __name__ == "__main__":
     bz = Buzzer(25)
     bz.on()
     bz.beep()
+    sleep(0.5)
     bz.off()
 
     try:
