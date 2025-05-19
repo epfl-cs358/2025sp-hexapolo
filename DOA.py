@@ -63,7 +63,7 @@ def turn_to_angle(target_angle):
 
 
 if __name__ == "__main__":
-    bz = Buzzer(25)
+    bz = Buzzer(11)
     bz.on()
     bz.beep()
     sleep(0.5)
