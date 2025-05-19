@@ -1,7 +1,7 @@
 from gpiozero import Motor
 from time import sleep
 
-walk_motor = Motor(forward=17, backward=22)
+walk_motor = Motor(forward=4, backward=22)
 turn_motor = Motor(forward=23, backward=24)
 SPR = 200  # Steps per full rotation
 STEP_DELAY = 0.2  # Increased delay for better movement
@@ -33,19 +33,19 @@ def turn(angle, speed=1):
 
 def main():
     print("Moving forward for 1 second")
-    forward(1)  # Move forward for 1 second
+    forward(3)  # Move forward for 1 second
     
     print("Turning 90 degrees right")
     turn(90)  # Right turn
     
     print("Moving forward for 1 second")
-    forward(1)
+    forward(3)
     
     print("Turning 180 degrees left")
     turn(-180)  # Left turn
     
     print("Moving backward for 1 second")
-    backward(1)
+    backward(3)
 
 if __name__ == "__main__":
     main()
