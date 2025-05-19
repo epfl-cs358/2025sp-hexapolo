@@ -9,14 +9,18 @@ current_angle = 0  # Tracks motor’s current angle position
 SPR = 200 # Steps per full rotation
 
 # Set direction to true to turn right
-def turn_motor(direction):
-    if direction:
-        motor.forward()
+def turn_motor(angle, speed=1):
+    """Turn by specified angle in degrees (positive=right, negative=left)"""
+    # Convert angle to time-based turn (simplified approach)
+    turn_time = abs(angle) / 30 * 0.5  # 0.5s per 90 degrees
+    
+    if angle > 0:
+        motor.forward(speed)  # Right turn
     else:
-        motor.backward()
-    sleep(0.1)
+        motor.backward(speed)  # Left turn
+    
+    sleep(turn_time)
     motor.stop()
-    sleep(0.05)
 
 def get_doa_angle():
     dev = usb.core.find(idVendor=0x2886, idProduct=0x0018)
@@ -45,13 +49,15 @@ def turn_to_angle(target_angle):
     if delta > 180:
         delta -= 360  # Choose shortest path
 
-    direction = delta > 0
-    steps = int(abs(delta) / 360 * SPR)
+    # direction = delta > 0
+    # steps = int(abs(delta) / 360 * SPR)
 
     print(f"Turning {'CW' if direction else 'CCW'} by {abs(delta)}° ({steps} steps)")
 
-    for _ in range(steps):
-        turn_motor(direction)
+    turn_motor(angle=delta)
+
+    # for _ in range(steps):
+    #     turn_motor(direction)
 
     current_angle = target_angle
 
