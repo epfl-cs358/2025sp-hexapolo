@@ -10,17 +10,17 @@ def read_from_esp32():
         if ser.in_waiting > 0:
             received = ser.readline().decode().strip()
             if received:  # Only print non-empty lines
-                print(f"[ESP32] {received}")
+                print(f"[ESP32]: {received}")
 
 def send_to_esp32():
     """Thread function to handle user input and send messages"""
     while True:
-        message = input("Enter message to send (or 'exit' to quit): ")
+        message = input("")
         if message.lower() == 'exit':
             break
         if message:  # Only send non-empty messages
             ser.write(f"{message}\n".encode())
-            print(f"[You] Sent: {message}")
+            print(f"[Pi]: {message}")
 
 # Start threads
 read_thread = threading.Thread(target=read_from_esp32, daemon=True)
