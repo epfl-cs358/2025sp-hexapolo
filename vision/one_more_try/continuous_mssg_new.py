@@ -5,7 +5,7 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 # Configuration
-ESP32_IP = "172.20.10.4"  # Replace with your ESP32-CAM IP
+ESP32_IP = "172.21.78.5"  # Replace with your ESP32-CAM IP
 LAPTOP_IP = "0.0.0.0"     # Will listen on all available network interfaces
 LAPTOP_PORT = 5000        # Port for the laptop server
 
@@ -53,7 +53,7 @@ def main():
     print("Type 'exit' to quit.\n")
 
     while True:
-        message = input("Your message to ESP32: ").strip()
+        message = input("").strip()
         
         if not message:
             continue
@@ -62,15 +62,9 @@ def main():
             print("Exiting...")
             break
 
-        # Send message to ESP32 and measure response time
-        start_time = time.time()
-        response = send_message(message)
-        elapsed_ms = (time.time() - start_time) * 1000
-
-        # Print results
-        print("\n--- Response ---")
-        print(f"ESP32-CAM replied: {response}")
-        print(f"Response time: {elapsed_ms:.0f} ms\n")
+        # Send message to ESP32
+        send_message(message)
+        print(f"[Laptop]: {message}")
 
 if __name__ == "__main__":
     main()
