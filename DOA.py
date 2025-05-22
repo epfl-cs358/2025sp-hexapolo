@@ -2,11 +2,12 @@ from usb_4_mic_array.tuning import Tuning
 import usb.core
 import usb.util
 from time import sleep
-from gpiozero import Buzzer, Motor
-from vosk import Model, KaldiRecognizer
 import pyaudio
 import json
-
+import pvporcupine
+import pyaudio
+import struct
+import os
 
 motor = Motor(forward=23, backward=24)
 current_angle = 0  
@@ -63,41 +64,47 @@ def get_doa_angle():
 
 
 def wait_for_wake_word():
-    print("Initializing Vosk...")
+    print("Initializing Porcupine on Raspberry Pi...")
 
-    model = Model("model")  # Path to unzipped Vosk model
-    recognizer = KaldiRecognizer(model, 16000)
+    library_path = "libpv_porcupine.so"  # ARMv6 version
+    keyword_path = "keyword.ppn"
+    access_key = "+QaATGRUbeBmooQyrWr9tnsItC6JR6ZgCO3F+tmdkRV//dSWCZuK0A=="
 
-    p = pyaudio.PyAudio()
-    stream = p.open(format=pyaudio.paInt16,
-                    channels=1,
-                    rate=16000,
-                    input=True,
-                    frames_per_buffer=8000)
-    stream.start_stream()
+    porcupine = pvporcupine.create(
+        access_key=access_key,
+        library_path=library_path,
+        model_path=None,  # Use default unless custom needed
+        keyword_paths=[keyword_path],
+        sensitivities=[0.7]
+    )
 
-    print("Say 'marco' to activate...")
+    pa = pyaudio.PyAudio()
+    stream = pa.open(
+        rate=porcupine.sample_rate,
+        channels=1,
+        format=pyaudio.paInt16,
+        input=True,
+        frames_per_buffer=porcupine.frame_length
+    )
+
+    print("Say 'polo' to activate...")
 
     try:
         while True:
-            data = stream.read(4000, exception_on_overflow=False)
-            if recognizer.AcceptWaveform(data):
-                result = json.loads(recognizer.Result())
-                text = result.get("text", "")
-                print("Recognized:", text)
-
-                if "polo" in text.lower():
-                    print("Wake word 'marco' detected!")
-                    break
+            pcm = stream.read(porcupine.frame_length, exception_on_overflow=False)
+            pcm = struct.unpack_from("h" * porcupine.frame_length, pcm)
+            keyword_index = porcupine.process(pcm)
+            if keyword_index >= 0:
+                print("Wake word detected!")
+                break
 
     except KeyboardInterrupt:
-        print("Interrupted.")
+        print("Stopped.")
     finally:
         stream.stop_stream()
         stream.close()
-        p.terminate()
-
-
+        pa.terminate()
+        porcupine.delete()
 
 
 def main():
