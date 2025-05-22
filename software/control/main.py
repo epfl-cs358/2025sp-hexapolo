@@ -5,7 +5,7 @@ from basic_movement import forward, turn
 
 bz = Buzzer(11)
 
-if __name__ == "__main__":
+def main_control_loop():
     bz.on()
     bz.beep()
     sleep(0.5)
@@ -21,3 +21,6 @@ if __name__ == "__main__":
                 forward(5)
     except KeyboardInterrupt:
         print("\nProgram terminated cleanly.")
+
+if __name__ == "__main__":
+    main_control_loop()
