@@ -1,8 +1,8 @@
 #include "esp_camera.h"
+#include <HTTPClient.h> // HTTP client functionality
+#include <WebServer.h>
 #include <WiFi.h>
 #include <cstdlib>
-#include <WebServer.h>
-#include <HTTPClient.h>  // HTTP client functionality
 
 //
 // WARNING!!! PSRAM IC required for UXGA resolution and high JPEG quality
@@ -34,27 +34,28 @@ const char *password = WIFI_PASSWORD;
 // Web Server on port 80 (for messaging)
 WebServer server(8080);
 
-String lastReceivedMessage = "";  // Store the last received message from the Pi
+String lastReceivedMessage = ""; // Store the last received message from the Pi
 
-const char* LAPTOP_IP = "172.21.66.245";  // Replace with your laptop's IP
+const char *LAPTOP_IP = "192.26.46.249"; // Replace with your laptop's IP
 const int LAPTOP_PORT = 5000;
-String LAPTOP_ENDPOINT = "http://" + String(LAPTOP_IP) + ":" + String(LAPTOP_PORT) + "/esp32_message";
+String LAPTOP_ENDPOINT = "http://" + String(LAPTOP_IP) + ":" +
+                         String(LAPTOP_PORT) + "/esp32_message";
 
 void sendToLaptop(String message) {
-    WiFiClient client;
-    HTTPClient http;
-    
-    http.begin(client, LAPTOP_ENDPOINT);
-    http.addHeader("Content-Type", "application/json");
-    
-    String payload = "{\"text\":\"" + message + "\"}";
-    int httpResponseCode = http.POST(payload);
-    
-    if (httpResponseCode <= 0) {
-        Serial.println("Error sending to laptop: " + String(httpResponseCode));
-    }
-    
-    http.end();
+  WiFiClient client;
+  HTTPClient http;
+
+  http.begin(client, LAPTOP_ENDPOINT);
+  http.addHeader("Content-Type", "application/json");
+
+  String payload = "{\"text\":\"" + message + "\"}";
+  int httpResponseCode = http.POST(payload);
+
+  if (httpResponseCode <= 0) {
+    Serial.println("Error sending to laptop: " + String(httpResponseCode));
+  }
+
+  http.end();
 }
 
 // ===================
@@ -155,7 +156,7 @@ void setup() {
   server.on("/message", HTTP_GET, []() {
     if (server.hasArg("text")) {
       String message = server.arg("text");
-      Serial.println(message);  // Send to Raspberry Pi via Serial
+      Serial.println(message); // Send to Raspberry Pi via Serial
       server.send(200, "text/plain", "OK");
     } else {
       server.send(400, "text/plain", "ERROR: Missing 'text' parameter");
@@ -169,11 +170,11 @@ void setup() {
 void loop() {
   server.handleClient();
 
-  if (Serial.available() > 0){
+  if (Serial.available() > 0) {
     String message = Serial.readStringUntil('\n');
     message.trim();
 
-    if (message != ""){
+    if (message != "") {
       lastReceivedMessage = message;
 
       // Send this message to the laptop
