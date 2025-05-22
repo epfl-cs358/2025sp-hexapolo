@@ -2,15 +2,37 @@ import cv2
 import time
 import torch
 import logging
+import requests
+from flask import Flask, request, jsonify
 from ultralytics import YOLO
 
 # Suppress ultralytics logging
 logging.getLogger("ultralytics").setLevel(logging.WARNING)
 
+app = Flask(__name__)
+
 # ESP32-CAM stream URL
-esp_ip = "172.20.10.2" # Replace with your ESP32-CAM IP address since it may change based on the network
+esp_ip = "172.21.78.5" # Replace with your ESP32-CAM IP address since it may change based on the network
 port = 81
+LAPTOP_IP = "0.0.0.0"     # Will listen on all available network interfaces
+LAPTOP_PORT = 5000        # Port for the laptop server
+
 URL = f"http://{esp_ip}:{port}/stream"
+MESSAGE_ENDPOINT = f"http://{esp_ip}:8080/message"
+TIMEOUT_SECONDS = 3  # Fail fast if ESP32 isn't responding
+
+# Store the last received message from ESP32/Raspberry Pi
+last_received_message = ""
+
+@app.route('/esp32_message', methods=['GET', 'POST'])
+def handle_esp32_message():
+    global last_received_message
+    if request.method == 'GET':
+        return jsonify({"message": last_received_message})
+    elif request.method == 'POST':
+        last_received_message = request.json.get('text', '')
+        print(f"\n[Pi]: {last_received_message}")
+        return jsonify({"status": "success"})
 
 # Check for GPU
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -76,7 +98,6 @@ def process_frame(frame):
         x1, y1, x2, y2 = best_box
         cx, cy = best_center
 
-        print(f"Human detected - Proximity: {proximity_level}")
         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
         label = proximity_level
         text_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 2)[0]
@@ -90,21 +111,39 @@ def process_frame(frame):
             dy = cy - prev_center[1]
             if abs(dx) > abs(dy):
                 if dx > movement_threshold:
-                    print("Moving Right")
+                    response = send_message("right")
+                    print(f"[Laptop]: right, ACK: {response}")
                 elif dx < -movement_threshold:
-                    print("Moving Left")
-            else:
-                if dy > movement_threshold:
-                    print("Moving Down")
-                elif dy < -movement_threshold:
-                    print("Moving Up")
+                    response = send_message("left")
+                    print(f"[Laptop]: left, ACK: {response}")
 
         prev_center = (cx, cy)
 
     return frame
 
+def send_message(text):
+    """Send a message to ESP32-CAM and return the response."""
+    try:
+        response = requests.get(
+            MESSAGE_ENDPOINT,
+            params={"text": text},
+            timeout=TIMEOUT_SECONDS
+        )
+        if response.status_code == 200:
+            return response.text.strip()
+        else:
+            return f"Error: HTTP {response.status_code}"
+    except requests.exceptions.RequestException as e:
+        return f"Failed to communicate with ESP32-CAM: {str(e)}"
+
 if __name__ == '__main__':
     prev_time = time.time()
+
+    # Run Flask server in a separate thread
+    from threading import Thread
+    server_thread = Thread(target=lambda: app.run(host=LAPTOP_IP, port=LAPTOP_PORT))
+    server_thread.daemon = True
+    server_thread.start()
 
     while True:
         if cap.isOpened():
