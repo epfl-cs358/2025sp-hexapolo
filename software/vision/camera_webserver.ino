@@ -36,7 +36,7 @@ WebServer server(8080);
 
 String lastReceivedMessage = ""; // Store the last received message from the Pi
 
-const char *LAPTOP_IP = "192.26.46.249"; // Replace with your laptop's IP
+const char *LAPTOP_IP = "172.21.68.88"; // Replace with your laptop's IP
 const int LAPTOP_PORT = 5000;
 String LAPTOP_ENDPOINT = "http://" + String(LAPTOP_IP) + ":" +
                          String(LAPTOP_PORT) + "/esp32_message";
