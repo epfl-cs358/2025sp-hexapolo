@@ -1,56 +1,86 @@
-from basic_movement import turn
-from usb_4_mic_array.tuning import Tuning
+#!/usr/bin/env python3
+
+import struct
+import sys
 import usb.core
-import usb.util
 from time import sleep
-from vosk import Model, KaldiRecognizer
+
+import pvporcupine
 import pyaudio
-import json
+from usb_4_mic_array.tuning import Tuning
 
-# Load Vosk model
-model = Model("model")  # path to unzipped Vosk model folder
-recognizer = KaldiRecognizer(model, 16000)
+# Configuration
+KEYWORD_PATH = "polo.ppn"
+SENSITIVITY = 0.6
+PA_DEVICE_NAME = "ReSpeaker"
+ACCESS_KEY = "VwKDB5AYHN1P7Z9SVMbRKqVotPpxod+ohhlNtwiWWzkGPGMIyngzrQ=="  # Replace with your actual key
 
-# PyAudio settings
-p = pyaudio.PyAudio()
+
+def find_respeaker_index(pa, name_substr="ReSpeaker"):
+    for idx in range(pa.get_device_count()):
+        info = pa.get_device_info_by_index(idx)
+        if name_substr.lower() in info["name"].lower() and info["maxInputChannels"] > 0:
+            return idx
+    return None
+
 
 def get_doa_angle():
+    porcupine = pvporcupine.create(
+        access_key=ACCESS_KEY,
+        keyword_paths=[KEYWORD_PATH],
+        sensitivities=[SENSITIVITY],
+    )
+
+    pa = pyaudio.PyAudio()
+    dev_index = find_respeaker_index(pa, PA_DEVICE_NAME)
+    if dev_index is None:
+        print("ReSpeaker device not found.")
+        return -1
+
+    stream = pa.open(
+        rate=porcupine.sample_rate,
+        channels=1,
+        format=pyaudio.paInt16,
+        input=True,
+        input_device_index=dev_index,
+        frames_per_buffer=porcupine.frame_length,
+    )
+
     dev = usb.core.find(idVendor=0x2886, idProduct=0x0018)
     if not dev:
-        print("Mic Array not found.")
-        return None
+        print("Mic Array USB device not found.")
+        return -1
+    tuning = Tuning(dev)
 
-    Mic_tuning = Tuning(dev)
-    stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000,
-                    input=True, frames_per_buffer=8000)
-    stream.start_stream()
-
-    print("Say 'marco' to activate...")
+    print("Listening for polo wake word...")
 
     try:
         while True:
-            data = stream.read(4000, exception_on_overflow=False)
-            if recognizer.AcceptWaveform(data):
-                result = recognizer.Result()
-                text = json.loads(result).get("text", "")
-                print("Recognized:", text)
+            pcm = stream.read(porcupine.frame_length, exception_on_overflow=False)
+            pcm = struct.unpack_from("h" * porcupine.frame_length, pcm)
 
-                if "polo" in text.lower():
-                    print("Wake word 'marco' detected!")
-                    if Mic_tuning.is_voice():
-                        angle = Mic_tuning.direction
-                        angle = (angle + 90) % 360
-                        print(f"Voice detected at {angle}°")
-                        return angle 
-                    sleep(0.05)
+            if porcupine.process(pcm) >= 0:
+                print("Keyword 'bumblebee' detected!")
+
+                # Wait briefly to let sound settle
+                sleep(0.05)
+
+                try:
+                    angle = (tuning.direction + 90) % 360
+                    print(f"DOA angle at wake word: {angle} degrees")
+                    return angle
+                except Exception as e:
+                    print("Error reading DOA:", e)
+                    return -1
     except KeyboardInterrupt:
-        print("\nStopped by user.")
+        print("Stopped by user.")
         return -1
     finally:
         stream.stop_stream()
         stream.close()
-        p.terminate()
+        pa.terminate()
+        porcupine.delete()
 
 
-
-
+if __name__ == "__main__":
+    sys.exit(get_doa_angle())
