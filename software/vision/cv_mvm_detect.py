@@ -48,8 +48,11 @@ prev_center = None
 movement_threshold = 20  # Pixels for movement detection
 
 def process_frame(frame):
-    """Run YOLO on frame and focus on closest valid person"""
+    """Run YOLO on frame and focus on closest valid person."""
     global prev_center
+
+    frame_height, frame_width, _ = frame.shape
+    frame_area = frame_width * frame_height
 
     results = model(frame, verbose=False)
     result = results[0]
@@ -105,17 +108,23 @@ def process_frame(frame):
         cv2.putText(frame, label, (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
         cv2.circle(frame, (cx, cy), 5, (255, 0, 0), -1)
 
+        # Check if the detected person's frame takes up 60% or more of the screen
+        person_area_percentage = (largest_area / frame_area) * 100
+        if person_area_percentage >= 60:
+            send_message_to_main("Person detected: Frame occupies 60% or more of the screen.")
+            print("[cv_mvm_detect.py]: Sent 'arrived' message to main.py")
+
         # Movement direction
         if prev_center:
             dx = cx - prev_center[0]
             dy = cy - prev_center[1]
             if abs(dx) > abs(dy):
                 if dx > movement_threshold:
-                    response = send_message("right")
-                    print(f"[Laptop]: right, ACK: {response}")
+                    send_message_to_main("Person moving right.")
+                    print("[cv_mvm_detect.py]: Sent 'right' message to main.py")
                 elif dx < -movement_threshold:
-                    response = send_message("left")
-                    print(f"[Laptop]: left, ACK: {response}")
+                    send_message_to_main("Person moving left.")
+                    print("[cv_mvm_detect.py]: Sent 'left' message to main.py")
 
         prev_center = (cx, cy)
 
@@ -135,6 +144,23 @@ def send_message(text):
             return f"Error: HTTP {response.status_code}"
     except requests.exceptions.RequestException as e:
         return f"Failed to communicate with ESP32-CAM: {str(e)}"
+
+def send_message_to_main(text):
+    """Send a message to the Flask server in main.py."""
+    MAIN_SERVER_URL = "http://<MAIN_SERVER_IP>:5001/receive_message"  # Replace <MAIN_SERVER_IP> with the actual IP
+    try:
+        response = requests.post(
+            MAIN_SERVER_URL,
+            json={"text": text},
+            timeout=3
+        )
+        if response.status_code == 200:
+            response_data = response.json()
+            print(f"[main.py Response]: {response_data.get('response', 'No response')}")
+        else:
+            print(f"Error: HTTP {response.status_code}")
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to communicate with main.py: {str(e)}")
 
 if __name__ == '__main__':
     prev_time = time.time()
