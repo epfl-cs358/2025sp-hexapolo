@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import struct
 import sys
 import usb.core
@@ -9,8 +7,36 @@ import pvporcupine
 import pyaudio
 from usb_4_mic_array.tuning import Tuning
 
+import wave
+
+def play_wav(path, speed=1.0):
+    import wave
+    import pyaudio
+
+    wf = wave.open(path, 'rb')
+    pa = pyaudio.PyAudio()
+
+    # Slow down = lower playback rate
+    playback_rate = int(wf.getframerate() / speed)
+
+    stream = pa.open(
+        format=pa.get_format_from_width(wf.getsampwidth()),
+        channels=wf.getnchannels(),
+        rate=playback_rate,
+        output=True
+    )
+
+    data = wf.readframes(1024)
+    while data:
+        stream.write(data)
+        data = wf.readframes(1024)
+
+    stream.stop_stream()
+    stream.close()
+    pa.terminate()
+
 # Configuration
-KEYWORD_PATH = "polo.ppn"
+KEYWORD_PATH = "polo.ppn" #Change it to polo_window.ppn if testing on PC
 SENSITIVITY = 0.6
 PA_DEVICE_NAME = "ReSpeaker"
 ACCESS_KEY = "VwKDB5AYHN1P7Z9SVMbRKqVotPpxod+ohhlNtwiWWzkGPGMIyngzrQ=="  # Replace with your actual key
@@ -52,6 +78,10 @@ def get_doa_angle():
         return -1
     tuning = Tuning(dev)
 
+    
+    play_wav("Marco.wav", speed=1.2)
+  
+
     print("Listening for polo wake word...")
 
     try:
@@ -60,7 +90,7 @@ def get_doa_angle():
             pcm = struct.unpack_from("h" * porcupine.frame_length, pcm)
 
             if porcupine.process(pcm) >= 0:
-                print("Keyword 'bumblebee' detected!")
+                print("Keyword 'polo polo' detected!")
 
                 # Wait briefly to let sound settle
                 sleep(0.05)
