@@ -20,7 +20,7 @@ LAPTOP_PORT = 5000        # Port for the laptop server
 URL = f"http://{esp_ip}:{port}/stream"
 MESSAGE_ENDPOINT = f"http://{esp_ip}:8080/message"
 TIMEOUT_SECONDS = 3  # Fail fast if ESP32 isn't responding
- 
+
 # Camera settings
 CAMERA_HFOV = 40  # Horizontal field of view in degrees
 TURN_THRESHOLD = 5 # Minimum angle difference to trigger a turn command
@@ -55,9 +55,9 @@ movement_threshold = 50  # Pixels for movement detection
 def process_frame(frame):
     global prev_center
 
-    frame_height, frame_width, _ = frame.shape    
+    frame_height, frame_width, _ = frame.shape
     frame_area = frame_width * frame_height
-    
+
     """Run YOLO on frame and focus on closest valid person"""
     results = model(frame, verbose=False)
     result = results[0]
@@ -86,12 +86,12 @@ def process_frame(frame):
             continue
 
         cx = (x1 + x2) // 2  # Center x-coordinate of detection
-        
+
         if area > largest_area:
             largest_area = area
             best_box = (x1, y1, x2, y2)
             best_center = cx
-            
+
             # Update color based on area (proximity)
             if area > 60000:
                 color = (0, 0, 255)  # Red for close
@@ -104,13 +104,19 @@ def process_frame(frame):
         # Draw bounding box
         x1, y1, x2, y2 = best_box
         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
-        
+
         # Draw center dot
         cv2.circle(frame, (best_center, (y1 + y2) // 2), 5, (255, 0, 0), -1)
 
+        # Check if the detected person's frame takes up 60% or more of the screen
+        person_area_percentage = (largest_area / frame_area) * 100
+        if person_area_percentage >= 60:
+            response = send_message("stop")
+            print(f"[Laptop]: stop, ACK: {response}")
+
         # Calculate how far off center the person is
         pixels_from_center = best_center - frame_center
-        
+
         # Convert to angle based on camera's FOV
         relative_pos = pixels_from_center / (frame_width / 2)
         turn_angle = relative_pos * (CAMERA_HFOV / 2)
@@ -119,25 +125,25 @@ def process_frame(frame):
         if abs(turn_angle) > TURN_THRESHOLD and (prev_center is None or abs(best_center - prev_center) > 10):
             # Limit maximum turn angle
             turn_angle = max(min(turn_angle, MAX_TURN_ANGLE), -MAX_TURN_ANGLE)
-            
+
             direction = 'right' if turn_angle > 0 else 'left'
             command = f"{direction} {abs(turn_angle):.1f}"
-            
+
             # Send the command
             response = send_message(command)
             print(f"[Laptop]: {command} (offset: {pixels_from_center:.1f}px, {turn_angle:.1f}°)")
-         
+
         # Update previous center position
         prev_center = best_center
-        
+
         # Draw visualization elements
         cv2.line(frame, (int(frame_center), 0), (int(frame_center), frame.shape[0]), (0, 255, 0), 1)  # Center line
         cv2.line(frame, (best_center, 0), (best_center, frame.shape[0]), (0, 0, 255), 1)  # Person center line
-        cv2.putText(frame, f"Angle: {turn_angle:.1f}", 
+        cv2.putText(frame, f"Angle: {turn_angle:.1f}",
                    (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
     return frame
-    
+
 def send_message(text):
     """Send a message to ESP32-CAM and return the response."""
     try:
