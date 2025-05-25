@@ -2,6 +2,7 @@ from gpiozero import Buzzer
 from time import sleep
 from DOA import get_doa_angle
 from basic_movement import forward, turn
+from communication.read_from_serial import received_global
 
 bz = Buzzer(11)
 
@@ -14,6 +15,8 @@ def main_control_loop():
     try:
         while True:
             doa = get_doa_angle()
+            # if received_global is not None:
+
             if doa == -1:
                 break
             elif doa is not None:

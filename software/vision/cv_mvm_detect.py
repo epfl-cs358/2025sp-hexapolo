@@ -48,7 +48,7 @@ prev_center = None
 movement_threshold = 20  # Pixels for movement detection
 
 def process_frame(frame):
-    """Run YOLO on frame and focus on closest valid person."""
+    """Run YOLO on frame and focus on closest valid person"""
     global prev_center
 
     frame_height, frame_width, _ = frame.shape
@@ -111,7 +111,7 @@ def process_frame(frame):
         # Check if the detected person's frame takes up 60% or more of the screen
         person_area_percentage = (largest_area / frame_area) * 100
         if person_area_percentage >= 60:
-            send_message_to_main("Person detected: Frame occupies 60% or more of the screen.")
+            response = send_message("Person detected: Frame occupies 60% or more of the screen.")
             print("[cv_mvm_detect.py]: Sent 'arrived' message to main.py")
 
         # Movement direction
@@ -120,11 +120,11 @@ def process_frame(frame):
             dy = cy - prev_center[1]
             if abs(dx) > abs(dy):
                 if dx > movement_threshold:
-                    send_message_to_main("Person moving right.")
-                    print("[cv_mvm_detect.py]: Sent 'right' message to main.py")
+                    response = send_message("right")
+                    print(f"[Laptop]: right, ACK: {response}")
                 elif dx < -movement_threshold:
-                    send_message_to_main("Person moving left.")
-                    print("[cv_mvm_detect.py]: Sent 'left' message to main.py")
+                    response = send_message("left")
+                    print(f"[Laptop]: left, ACK: {response}")
 
         prev_center = (cx, cy)
 
@@ -144,23 +144,6 @@ def send_message(text):
             return f"Error: HTTP {response.status_code}"
     except requests.exceptions.RequestException as e:
         return f"Failed to communicate with ESP32-CAM: {str(e)}"
-
-def send_message_to_main(text):
-    """Send a message to the Flask server in main.py."""
-    MAIN_SERVER_URL = "http://<MAIN_SERVER_IP>:5001/receive_message"  # Replace <MAIN_SERVER_IP> with the actual IP
-    try:
-        response = requests.post(
-            MAIN_SERVER_URL,
-            json={"text": text},
-            timeout=3
-        )
-        if response.status_code == 200:
-            response_data = response.json()
-            print(f"[main.py Response]: {response_data.get('response', 'No response')}")
-        else:
-            print(f"Error: HTTP {response.status_code}")
-    except requests.exceptions.RequestException as e:
-        print(f"Failed to communicate with main.py: {str(e)}")
 
 if __name__ == '__main__':
     prev_time = time.time()

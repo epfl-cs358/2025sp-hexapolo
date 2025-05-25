@@ -3,14 +3,16 @@ import threading
 
 # Initialize serial connection
 ser = serial.Serial('COM9', baudrate=115200, timeout=1)
-
+received_global = ""
 def read_from_esp32():
     """Thread function to continuously read ESP32 responses"""
+    global received_global
     while True:
         if ser.in_waiting > 0:
             received = ser.readline().decode().strip()
             if received:  # Only print non-empty lines
                 print(f"[ESP32]: {received}")
+                received_global = received
 
 def send_to_esp32():
     """Thread function to handle user input and send messages"""
