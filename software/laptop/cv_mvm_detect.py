@@ -82,9 +82,6 @@ def process_frame(frame):
         height = y2 - y1
         area = width * height
 
-        if height < 100 or area < 15000:  # Filter small detections
-            continue
-
         cx = (x1 + x2) // 2  # Center x-coordinate of detection
 
         if area > largest_area:
