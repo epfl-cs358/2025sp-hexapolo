@@ -54,6 +54,9 @@ movement_threshold = 50  # Pixels for movement detection
 
 def process_frame(frame):
     global prev_center
+
+    frame_height, frame_width, _ = frame.shape    
+    frame_area = frame_width * frame_height
     
     """Run YOLO on frame and focus on closest valid person"""
     results = model(frame, verbose=False)
