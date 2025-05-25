@@ -51,6 +51,9 @@ def process_frame(frame):
     """Run YOLO on frame and focus on closest valid person"""
     global prev_center
 
+    frame_height, frame_width, _ = frame.shape
+    frame_area = frame_width * frame_height
+
     results = model(frame, verbose=False)
     result = results[0]
 
@@ -104,6 +107,13 @@ def process_frame(frame):
         cv2.rectangle(frame, (x1, y1 - text_size[1] - 5), (x1 + text_size[0], y1), color, -1)
         cv2.putText(frame, label, (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
         cv2.circle(frame, (cx, cy), 5, (255, 0, 0), -1)
+
+        # Check if the detected person's frame takes up 60% or more of the screen
+        person_area_percentage = (largest_area / frame_area) * 100
+        if person_area_percentage >= 60:
+            response = send_message("stop")
+            print(f"[Laptop]: stop, ACK: {response}")
+
 
         # Movement direction
         if prev_center:
