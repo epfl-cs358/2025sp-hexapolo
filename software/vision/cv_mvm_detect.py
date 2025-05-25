@@ -114,6 +114,7 @@ def process_frame(frame):
             response = send_message("stop")
             print(f"[Laptop]: stop, ACK: {response}")
 
+
         # Movement direction
         if prev_center:
             dx = cx - prev_center[0]
