@@ -1,8 +1,8 @@
 from gpiozero import Motor
 from time import sleep
 
-turn_motor = Motor(forward=4, backward=22)
-walk_motor = Motor(forward=23, backward=24)
+walk_motor = Motor(forward=4, backward=11)
+turn_motor = Motor(forward=23, backward=24)
 
 def forward(duration=1, speed=1):
     """Move forward for specified duration in seconds"""
@@ -17,7 +17,7 @@ def turn(angle, speed=1):
     # Shortest turn
     if angle > 180:
         angle -= 360
-    print(f"Turning {'CCW' if angle < 0 else 'CW'} by {angle}°")
+    print(f"Turning {'CCW' if angle > 0 else 'CW'} by {angle}°")
 
     turn_time = abs(angle) / 30 * 0.5  # 0.5s per 90 degrees
 
