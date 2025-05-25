@@ -5,24 +5,31 @@ from read_from_serial import SerialReader
 
 def handle_command(command):
     """Handle incoming commands from ESP32"""
+    global continue_follow
+
     try:
         cmd = command.split()
         if len(cmd) >= 2:
-            direction = cmd[0]
-            angle = float(cmd[1])  # Convert angle to float
-            if direction == 'right':
-                angle *= -1
-            turn(angle)
+            direction = cmd[0].lower()
+            if direction == "stop":
+                continue_follow = False 
+            else:
+                angle = float(cmd[1])  # Convert angle to float
+                if direction == 'right':
+                    angle *= -1
+                turn(angle)
     except Exception as e:
         print(f"Error processing command: {e}")
 
 def follow():
+    global continue_follow
     serial_reader = SerialReader(port='/dev/ttyUSB0', callback=handle_command)
     serial_reader.start()
+    continue_follow = True
 
     try:
-        while True:
-            sleep(5)
+        while continue_follow:
+            forward(5)
     except KeyboardInterrupt:
         print("\nProgram terminated cleanly.")
     finally:
