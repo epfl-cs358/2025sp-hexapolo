@@ -111,8 +111,9 @@ def process_frame(frame):
         # Check if the detected person's frame takes up 60% or more of the screen
         person_area_percentage = (largest_area / frame_area) * 100
         if person_area_percentage >= 60:
-            response = send_message("Person detected: Frame occupies 60% or more of the screen.")
-            print("[cv_mvm_detect.py]: Sent 'arrived' message to main.py")
+            response = send_message("stop")
+            print(f"[Laptop]: stop, ACK: {response}")
+
 
         # Movement direction
         if prev_center:
