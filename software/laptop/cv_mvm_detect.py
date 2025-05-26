@@ -45,7 +45,7 @@ print(f"Using device: {device}")
 
 # Load YOLO model
 model = YOLO("yolo11n.pt").to(device)
-conf_threshold = 0.2  # Minimum confidence to consider detection
+conf_threshold = 0.4  # Minimum confidence to consider detection
 
 # Initialize video capture
 cap = cv2.VideoCapture(URL)

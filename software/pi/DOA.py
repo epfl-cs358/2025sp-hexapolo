@@ -55,7 +55,7 @@ def get_doa_angle():
                 sleep(0.05)
     except KeyboardInterrupt:
         print("\nStopped by user.")
-        return -1
+        return None
     finally:
         stream.stop_stream()
         stream.close()

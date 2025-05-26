@@ -1,0 +1,22 @@
+[Unit]
+Description=Robot Control Service with ESP32 Communication
+After=sysinit.target local-fs.target
+Before=multi-user.target
+Wants=sysinit.target
+Conflicts=serial-getty@ttyUSB0.service
+
+[Service]
+Type=simple
+User=pi
+Group=dialout
+WorkingDirectory=/home/pi/software/pi
+ExecStart=/usr/bin/python3 /home/pi/software/pi/main.py
+ExecStartPre=/bin/bash -c 'if pgrep minicom > /dev/null; then echo "Warning: minicom is running, stopping it"; pkill minicom; sleep 2; fi'
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
