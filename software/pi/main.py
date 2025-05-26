@@ -103,7 +103,7 @@ def main_control_loop():
                         break
                 else:
                     # No DOA detected, wait a bit before trying again
-                    sleep(0.5)
+                    sleep(2)
             except Exception as e:
                 logger.error(f"Error in main control loop iteration: {e}")
                 sleep(1)  # Wait before retrying
