@@ -14,11 +14,12 @@ from pathlib import Path
 
 import numpy as np
 import pyaudio
-import tensorflow as tf
+import tflite_runtime.interpreter as tflite
+
 
 from usb_4_mic_array.tuning import Tuning
 
-# ────────────────────────── Configuration ──────────────────────────
+
 MODEL_PATH          = Path("keyword_polo.tflite")
 PA_DEVICE_NAME      = "ReSpeaker"
 DETECTION_THRESHOLD = 0.5          # tune for your model
@@ -39,7 +40,8 @@ def find_respeaker_index(pa, name_substr="ReSpeaker"):
 class WakeWordDetector:
     """Thin wrapper around a TFLite wake-word model."""
     def __init__(self, model_path: Path):
-        self.interpreter = tf.lite.Interpreter(model_path=str(model_path))
+        self.interpreter = tflite.Interpreter(model_path=str(model_path))
+
 
         self.interpreter.allocate_tensors()
         self.in_details  = self.interpreter.get_input_details()[0]
