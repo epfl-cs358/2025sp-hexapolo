@@ -3,11 +3,53 @@ from usb_4_mic_array.tuning import Tuning
 import usb.core
 import usb.util
 from time import sleep
+import wave
 import pyaudio
-import json
 import porcupine
 import struct
-import os
+
+path = 'Marco.wav'
+
+def init_audio(path=path):
+    wf = wave.open(path, 'rb')
+    pa = pyaudio.PyAudio()
+    stream = pa.open(
+        format=pa.get_format_from_width(wf.getsampwidth()),
+        channels=wf.getnchannels(),
+        rate=wf.getframerate(),
+        output=True
+    )
+    return wf, stream, pa
+
+def play_one_chunk(wf, stream, chunk_size=1024):
+    data = wf.readframes(chunk_size)
+    if data:
+        stream.write(data)
+        return True  
+    else:
+        wf.rewind()
+        return False 
+
+
+def play_wav(path=path):
+    wf = wave.open(path, 'rb')
+    pa = pyaudio.PyAudio()
+
+    stream = pa.open(
+        format=pa.get_format_from_width(wf.getsampwidth()),
+        channels=wf.getnchannels(),
+        rate=wf.getframerate(),
+        output=True
+    )
+
+    data = wf.readframes(1024)
+    while data:
+        stream.write(data)
+        data = wf.readframes(1024)
+
+    stream.stop_stream()
+    stream.close()
+    pa.terminate()
 
 def get_doa_angle():
     dev = usb.core.find(idVendor=0x2886, idProduct=0x0018)
@@ -38,7 +80,7 @@ def get_doa_angle():
         frames_per_buffer=porcupine.frame_length
     )
 
-    print("Say 'come here' to activate...")
+    print("Say 'polo polo' to activate...")
 
     try:
         while True:

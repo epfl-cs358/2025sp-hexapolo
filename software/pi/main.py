@@ -2,7 +2,7 @@ from time import sleep
 import logging
 import signal
 import sys
-from DOA import get_doa_angle
+from audio import get_doa_angle, play_wav
 from basic_movement import forward, turn
 from read_from_serial import SerialReader
 
@@ -88,6 +88,7 @@ def main_control_loop():
     try:
         while not shutdown_flag:
             try:
+                play_wav()
                 doa = get_doa_angle()
                 if not doa:
                     logger.info("DOA loop interrupted, stopping main loop")
