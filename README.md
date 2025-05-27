@@ -25,16 +25,8 @@ The project’s goal is to combine sound detection, camera vision, and motor con
 can interact with people. The robot will also have optional features, like working in a noisy room
 or avoiding obstacles using a lidar scanner. The work is divided into small steps to make sure
 each part works well before moving to the next.
-<video width="640" height="360" controls>
 
-  <source src="resources/video_2025-05-28_01-32-11.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
-<video width="640" height="360" controls>
-
-  <source src="resources/video_2025-05-28_01-32-29.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+https://github.com/user-attachments/assets/a82f1c71-6dc9-49f4-babd-78dbcbe76842
 
 ### Hardware overview
 
