@@ -51,7 +51,9 @@ def handle_command(command):
                 if direction == 'left':
                     angle *= -1
                 logger.info(f"Executing turn command: {direction} {angle}°")
+                # try this
                 turn(angle)
+                forward(3)
         else:
             logger.warning(f"Invalid command format: {command}")
     except Exception as e:
@@ -69,7 +71,6 @@ def follow():
     try:
         logger.info("Follow mode active - robot will move forward and respond to turn commands")
         while continue_follow and not shutdown_flag:
-            forward(5)
             sleep(0.1)  # Small delay to check flags more frequently
     except KeyboardInterrupt:
         logger.info("Follow mode interrupted by user")

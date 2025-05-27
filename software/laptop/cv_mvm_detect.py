@@ -23,7 +23,7 @@ TIMEOUT_SECONDS = 3  # Fail fast if ESP32 isn't responding
 
 # Camera settings
 CAMERA_HFOV = 40  # Horizontal field of view in degrees
-TURN_THRESHOLD = 5 # Minimum angle difference to trigger a turn command
+TURN_THRESHOLD = 3 # Minimum angle difference to trigger a turn command
 MAX_TURN_ANGLE = 60 # Maximum turn angle to send
 
 # Store the last received message from ESP32/Raspberry Pi
@@ -45,7 +45,7 @@ print(f"Using device: {device}")
 
 # Load YOLO model
 model = YOLO("yolo11n.pt").to(device)
-conf_threshold = 0.4  # Minimum confidence to consider detection
+conf_threshold = 0.2  # Minimum confidence to consider detection
 
 # Initialize video capture
 cap = cv2.VideoCapture(URL)
@@ -107,7 +107,7 @@ def process_frame(frame):
 
         # Check if the detected person's frame takes up 60% or more of the screen
         person_area_percentage = (largest_area / frame_area) * 100
-        if person_area_percentage >= 60:
+        if person_area_percentage >= 50:
             response = send_message("stop")
             print(f"[Laptop]: stop, ACK: {response}")
 

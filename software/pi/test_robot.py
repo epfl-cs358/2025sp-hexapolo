@@ -189,7 +189,7 @@ def test_doa_functionality():
     logger.info("Testing DOA functionality...")
     
     try:
-        from DOA import get_doa_angle
+        from audio import get_doa_angle
         
         logger.info("Calling get_doa_angle() - this may take a moment...")
         doa_result = get_doa_angle()

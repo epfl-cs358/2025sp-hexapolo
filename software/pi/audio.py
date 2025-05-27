@@ -1,109 +1,81 @@
-from basic_movement import turn
 from usb_4_mic_array.tuning import Tuning
 import usb.core
-import usb.util
-from time import sleep
-import wave
-import pyaudio
-import porcupine
-import struct
+import subprocess
+import time
+import numpy as np
+import tflite_runtime.interpreter as tflite
+from pathlib import Path
 
-path = 'Marco.wav'
+# Config
+MODEL_PATH = Path("keyword_polo.tflite")
+DETECTION_THRESHOLD = 0.5
+AUDIO_DEVICE = "plughw:CARD=ArrayUAC10,DEV=0"  # Find with: arecord -L
+SAMPLE_RATE = 16000
+FRAME_MS = 30
+CHUNK_SIZE = int(SAMPLE_RATE * FRAME_MS / 1000)  # 480 samples for 30ms
 
-def init_audio(path=path):
-    wf = wave.open(path, 'rb')
-    pa = pyaudio.PyAudio()
-    stream = pa.open(
-        format=pa.get_format_from_width(wf.getsampwidth()),
-        channels=wf.getnchannels(),
-        rate=wf.getframerate(),
-        output=True
-    )
-    return wf, stream, pa
+class WakeWordDetector:
+    def __init__(self, model_path):
+        self.interpreter = tflite.Interpreter(model_path=str(model_path))
+        self.interpreter.allocate_tensors()
+        self.input_details = self.interpreter.get_input_details()[0]
+        self.output_details = self.interpreter.get_output_details()[0]
+        
+        self.ring_buffer = np.zeros(4, dtype=np.float32)
+        self.buffer_ptr = 0
 
-def play_one_chunk(wf, stream, chunk_size=1024):
-    data = wf.readframes(chunk_size)
-    if data:
-        stream.write(data)
-        return True  
-    else:
-        wf.rewind()
-        return False 
+    def process(self, pcm_data):
+        audio = np.frombuffer(pcm_data, dtype=np.int16).astype(np.float32) / 32768.0
+        self.interpreter.set_tensor(self.input_details['index'], audio.reshape(1, -1))
+        self.interpreter.invoke()
+        score = self.interpreter.get_tensor(self.output_details['index'])[0]
+        
+        # Smoothing
+        self.ring_buffer[self.buffer_ptr] = score
+        self.buffer_ptr = (self.buffer_ptr + 1) % 4
+        return np.mean(self.ring_buffer) >= DETECTION_THRESHOLD
 
+class AudioIn:
+    def __init__(self):
+        self.process = subprocess.Popen(
+            ["arecord", "-t", "raw", "-D", AUDIO_DEVICE,
+             "-c", "1", "-f", "S16_LE", "-r", str(SAMPLE_RATE)],
+            stdout=subprocess.PIPE,
+            bufsize=CHUNK_SIZE*2
+        )
 
-def play_wav(path=path):
-    wf = wave.open(path, 'rb')
-    pa = pyaudio.PyAudio()
+    def read_frame(self):
+        return self.process.stdout.read(CHUNK_SIZE * 2)  # 16-bit samples
 
-    stream = pa.open(
-        format=pa.get_format_from_width(wf.getsampwidth()),
-        channels=wf.getnchannels(),
-        rate=wf.getframerate(),
-        output=True
-    )
-
-    data = wf.readframes(1024)
-    while data:
-        stream.write(data)
-        data = wf.readframes(1024)
-
-    stream.stop_stream()
-    stream.close()
-    pa.terminate()
+def play_wav(path):
+    subprocess.run(["aplay", "-q", "-D", AUDIO_DEVICE, path])
 
 def get_doa_angle():
+    # Initialize hardware
     dev = usb.core.find(idVendor=0x2886, idProduct=0x0018)
     if not dev:
-        print("Mic Array not found.")
+        print("Mic array not found")
         return None
 
-    Mic_tuning = Tuning(dev)
-    library_path = "libpv_porcupine.so"  # ARMv6 version
-    keyword_path = "keyword.ppn"
-    access_key = "+QaATGRUbeBmooQyrWr9tnsItC6JR6ZgCO3F+tmdkRV//dSWCZuK0A=="
+    tuning = Tuning(dev)
+    audio_in = AudioIn()
+    detector = WakeWordDetector(MODEL_PATH)
 
-    porcupine = pvporcupine.create(
-        access_key=access_key,
-        library_path=library_path,
-        model_path=None,  # Use default unless custom needed
-        keyword_paths=[keyword_path],
-        sensitivities=[0.7]
-    )
-
-    pa = pyaudio.PyAudio()
-
-    stream = pa.open(
-        rate=porcupine.sample_rate,
-        channels=1,
-        format=pyaudio.paInt16,
-        input=True,
-        frames_per_buffer=porcupine.frame_length
-    )
-
-    print("Say 'polo polo' to activate...")
-
+    print("Listening for wake word...")
     try:
         while True:
-            pcm = stream.read(porcupine.frame_length, exception_on_overflow=False)
-            pcm = struct.unpack_from("h" * porcupine.frame_length, pcm)
-            keyword_index = porcupine.process(pcm)
-            if keyword_index >= 0:
-                print("Wake word detected!")
-                if Mic_tuning.is_voice():
-                    angle = Mic_tuning.direction
-                    angle = (angle + 90) % 360
-                    print(f"Voice detected at {angle}°")
-                    return angle 
-                sleep(0.05)
+            pcm = audio_in.read_frame()
+            if detector.process(pcm):
+                time.sleep(0.05)  # Let DOA settle
+                angle = (tuning.direction + 90) % 360
+                print(f"Wake word detected! Angle: {angle}°")
+                play_wav("Marco.wav")
+                return angle
     except KeyboardInterrupt:
-        print("\nStopped by user.")
+        print("\nStopped by user")
         return None
     finally:
-        stream.stop_stream()
-        stream.close()
-        pa.terminate()
-        porcupine.delete()
+        audio_in.process.terminate()
 
-
-
-
+if __name__ == "__main__":
+    get_doa_angle()
