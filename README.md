@@ -45,7 +45,7 @@ T-bar, gears and motors to rotate heads and control the movement of the legs :
 - **Walking Toward the Person:** The robot will move toward the person and stop when it is
   about 50 cm away.
 
-Below is an overview of the decision tree that forms the outline of Hexapolo's main algorithm :
+The following is an overview of the decision tree outlining Hexapolo's main algorithm :
 
 ![](docs/Decision%20Tree.svg)
 
@@ -55,7 +55,7 @@ Below is an overview of the decision tree that forms the outline of Hexapolo's m
 
 - **Raspberry Pi 1**
 
-  Note : none of our scripts were tested on any Raspberry Pi other than RPi1. However, because of good backward compatibility, all technologies tested on RPi1 should work on any next iteration of the board. Furthermore, you might encounter a few difficulties linked to the limited computing capabilities of the RP1. Using a more recent iteration of a Raspberry Pi such as RPi4 will definitely make the reproducability process much easier.
+  Note : none of our scripts were tested on any Raspberry Pi other than RPi1. However, because of good backward compatibility, all scripts tested on RPi1 should work on any next iteration of the board. Furthermore, you might encounter a few difficulties linked to the limited computing capabilities of the RP1. Using a more recent iteration of the Raspberry Pi, such as the RPi4, will make the reproducibility process significantly easier.
 
 ### Power Source
 
@@ -73,7 +73,7 @@ Below is an overview of the decision tree that forms the outline of Hexapolo's m
 - **Buzzer** (e.g. Purecrea Piezo buzzer active)
 - **Speaker**
 
-For our implementation, we stripped out both the speaker and the amplifer from an unbranded speaker. In the same way, you could use whatever speaker with a jack plug you want. Note that the whole build is quite heavy proportionally to the motors, choose your speaker carefully, the lighter the better. It's in the choice of this component that we decided to save some weight, you might also find it a good lead.
+For our implementation, we stripped out both the speaker and the amplifier from an unbranded speaker. In the same way, you could use whatever speaker with a jack plug you want. Note that the whole build is quite heavy proportionally to the motors, choose your speaker carefully, the lighter the better. We chose this component to save weight, and you might find this approach useful as well.
 
 ### Actuators
 
@@ -91,11 +91,11 @@ For our implementation, we stripped out both the speaker and the amplifer from a
 - **USB-A to Micro-USB cable**
 - **USB-A to Mini-USB cable**
 
-You might the sum of all the cables' and wires' weight heavy for the motors to move with the rest of the build. We suggest that you cut them short and solder the wires inside.
+The combined weight of all the cables and wires might be too heavy for the motors to move effectively with the rest of the build. We suggest that you cut them short and solder the wires inside.
 
 ## Software Requirements
 
-Due to the mutliples features of our project, the use of computer vision and audio processing, a large, yet lightweight, set of dependencies need to be installed. They are all listed in the following file below :
+Due to the multiple features of our project, the use of computer vision and audio processing, a large, yet lightweight, set of dependencies need to be installed. They are all listed in the following file below :
 
 - [Dependencies List](software/requirements.txt)
 
@@ -106,24 +106,24 @@ Due to the mutliples features of our project, the use of computer vision and aud
 The repository is organized as follows, important files have been highlighted:
 
     CAD/
-    ├── Electrical Components
+    ├── Electrical Components                                     # 3D files for a few electrical components we use
     │   ├── ...
     │   └── ...
     ├── Electronic plate
-    ├── Internal Mechanics
+    ├── Internal Mechanics                                        # 3D files for each mechanical piece of the gearbox
     │   └── 3D parts
-    ├── Moving Parts
+    ├── Moving Parts                                              # 3D files for each piece of the body
     │   └── 3D parts
-    └── New head with larger base plate
+    └── New head with larger base plate                           # 3D files for each piece of the head
         └── cam_stand
     docs/
     software/
-    ├── control
+    ├── control                                                   # Basic scripts to control hexapolo
     │   └── __pycache__
-    ├── esp
-    ├── laptop
-    ├── machine_learning
-    └── pi
+    ├── esp                                                       # Scripts handling the communication between the laptop and hexapolo
+    ├── laptop                                                    # Scripts processing the video feed from the esp32 cam and communicating with it via Wifi
+    ├── machine_learning                                          # Scripts used to train the ML model
+    └── pi                                                        # Scripts running on the RPi 1
         ├── model
         │   ├── am
         │   ├── conf
@@ -131,8 +131,8 @@ The repository is organized as follows, important files have been highlighted:
         │   │   └── phones
         │   └── ivector
         └── usb_4_mic_array
-            ├── single_frequency_sound_recognizance
-            └── test
+            ├── single_frequency_sound_recognizance               # Scripts to recognize a single frequency sound in the case where the voice recognition model couldn't work
+            └── test                                              # Unit tests
     README
 
 ## License
