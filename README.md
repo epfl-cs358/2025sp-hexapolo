@@ -1,5 +1,7 @@
 # 2025sp-hexapolo
 
+Zakaria Laribi, Nagyung Kim, Roméo Maignal, Tuan Dang Nguyen
+
 ## Table of Contents
 
 - [Project Overview](#project-overview)
@@ -9,7 +11,6 @@
 - [Installation](#installation)
 - [Usage](#usage)
 - [Project Structure](#project-structure)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## Project Overview
@@ -26,7 +27,14 @@ can interact with people. The robot will also have optional features, like worki
 or avoiding obstacles using a lidar scanner. The work is divided into small steps to make sure
 each part works well before moving to the next.
 
-## Features
+### Hardware overview
+
+The Legs and mechanical links to control the legs :
+![alt text](image-1.png)
+T-bar, gears and motors to rotate heads and control the movement of the legs :
+![alt text](image.png)
+
+## Features and Operation
 
 - **Keyword Detection:** The robot will listen for the word “Polo” and react when it hears it.
 - **Sound Direction Estimation:** It will use four microphones and a time difference of arrival
@@ -36,6 +44,10 @@ each part works well before moving to the next.
 - **Visual Detection:** The robot will use its camera to check if there is a person in front of it.
 - **Walking Toward the Person:** The robot will move toward the person and stop when it is
   about 50 cm away.
+
+Below is an overview of the decision tree that forms the outline of Hexapolo's main algorithm :
+
+![](docs/Decision%20Tree.svg)
 
 ## Hardware Requirements
 
@@ -53,7 +65,8 @@ each part works well before moving to the next.
 ### Sensors
 
 - **Mic Array** (e.g. ReSpeaker Mic Array v2.0)
-- **esp32 Camera** (AI thinker esp 32-cam)
+- **esp32 Camera** (e.g. AI thinker esp 32-cam)
+- **FTDI USB-to-serial** (e.g. FTDI FT232RL USB To TTL Serial Adapter Module)
 
 ### Sound Output & Speaker
 
@@ -70,7 +83,7 @@ For our implementation, we stripped out both the speaker and the amplifer from a
 
 ### Mechanical Components
 
-- **3x 8mm wide ball bearings**
+- **10x 8x4x3 Ball Bearing**
 
 ### Electrical Interfaces
 
@@ -82,19 +95,48 @@ You might the sum of all the cables' and wires' weight heavy for the motors to m
 
 ## Software Requirements
 
-- [List the software dependencies, e.g.:]
-  - Python 3.9+
-  - RPi.GPIO
-  - NumPy
-  - OpenCV (if applicable)
-  - [Other libraries]
+Due to the mutliples features of our project, the use of computer vision and audio processing, a large, yet lightweight, set of dependencies need to be installed. They are all listed in the following file below :
 
----
+- [Dependencies List](software/requirements.txt)
 
 ## Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/2025sp-hexapolo.git
-   cd 2025sp-hexapolo
-   ```
+## Project Structure
+
+The repository is organized as follows, important files have been highlighted:
+
+    CAD/
+    ├── Electrical Components
+    │   ├── ...
+    │   └── ...
+    ├── Electronic plate
+    ├── Internal Mechanics
+    │   └── 3D parts
+    ├── Moving Parts
+    │   └── 3D parts
+    └── New head with larger base plate
+        └── cam_stand
+    docs/
+    software/
+    ├── control
+    │   └── __pycache__
+    ├── esp
+    ├── laptop
+    ├── machine_learning
+    └── pi
+        ├── model
+        │   ├── am
+        │   ├── conf
+        │   ├── graph
+        │   │   └── phones
+        │   └── ivector
+        └── usb_4_mic_array
+            ├── single_frequency_sound_recognizance
+            └── test
+    README
+
+## License
+
+This project is licensed under the MIT License.
+
+You are free to use, modify, and distribute this software, provided that proper attribution is given to the original authors. For more details, please refer to the LICENSE file included in this repository.
