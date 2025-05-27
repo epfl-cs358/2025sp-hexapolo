@@ -5,11 +5,10 @@ Zakaria Laribi, Nagyung Kim, Roméo Maignal, Tuan Dang Nguyen
 ## Table of Contents
 
 - [Project Overview](#project-overview)
-- [Features](#features)
+- [Features & Operation](#features-and-operation)
 - [Hardware Requirements](#hardware-requirements)
 - [Software Requirements](#software-requirements)
 - [Installation](#installation)
-- [Usage](#usage)
 - [Project Structure](#project-structure)
 - [License](#license)
 
@@ -26,13 +25,32 @@ The project’s goal is to combine sound detection, camera vision, and motor con
 can interact with people. The robot will also have optional features, like working in a noisy room
 or avoiding obstacles using a lidar scanner. The work is divided into small steps to make sure
 each part works well before moving to the next.
+<video width="640" height="360" controls>
+
+  <source src="resources/video_2025-05-28_01-32-11.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+<video width="640" height="360" controls>
+
+  <source src="resources/video_2025-05-28_01-32-29.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
 ### Hardware overview
 
 The Legs and mechanical links to control the legs :
-![alt text](image-1.png)
+![alt text](resources/image-1.png)
 T-bar, gears and motors to rotate heads and control the movement of the legs :
-![alt text](image.png)
+![alt text](resources/image.png)
+
+### Electrical Overview
+
+Please note that the following diagram does not include the USB connections between the
+FTDI board and the Raspberry Pi as well as that between the microphone array (also not
+included) and the Raspberry Pi. Furthermore, note that the speaker amplifier will also be wired
+to a 3.5mm headphone jack, which will plug into the microphone array, through its A+ and A-
+ports.
+![alt text](resources/image-2.png)
 
 ## Features and Operation
 
