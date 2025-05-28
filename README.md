@@ -121,7 +121,6 @@ The combined weight of all the cables and wires might be too heavy for the motor
 
 ### OS
 
-- **Linux** running on your computer. Use whatever distro you prefer, nevertheless you might stumble into less trouble running a debian based distro.
 - **Linux (Debian)** running on the RPi1
 
 ### Dependencies
@@ -130,14 +129,30 @@ Due to the multiple features of our project, the use of computer vision and audi
 
 - [Dependencies List](software/requirements.txt)
 
-Amoung the list of software requirements, you'll find program that are crucial to make this project work.
+Amoung the list of software requirements, you'll find program that are crucial to make this project work. More specifically :
+
+On Linux :
 
 - **Minicom :** serial communication program used to run program in the Raspberry Pi from remote shell. This solution is heavily used and eliminates the need to connect additional peripherals to the RPi1 for control. [Minicon GitLab repository](https://salsa.debian.org/minicom-team/minicom)
 
+On Windows :
+
+- **PuTTY**
+
 ## Installation
 
+On the RPi1, download the libraries as a .tar.gz file :
+
 ```
-pip download --no-binary :all: -r .requirements.txt
+pip download --no-binary :all: -r requirements.txt
+```
+
+Then, copy the downloaded libraries to a usb flash drive and transfer them to the RPi1.
+
+On your laptop :
+
+```
+pip install -r requirements.txt
 ```
 
 ## Project Structure
@@ -150,11 +165,11 @@ The repository is organized as follows, important files have been highlighted:
     │   └── ...
     ├── Electronic plate
     ├── Internal Mechanics                                        # 3D files for each mechanical piece of the gearbox
-    │   └── 3D parts
+    │   └── ...
     ├── Moving Parts                                              # 3D files for each piece of the body
-    │   └── 3D parts
+    │   └── ...
     └── New head with larger base plate                           # 3D files for each piece of the head
-        └── cam_stand
+        └── ...
     docs/
     software/
     ├── control                                                   # Basic scripts to control hexapolo
@@ -164,12 +179,9 @@ The repository is organized as follows, important files have been highlighted:
     ├── machine_learning                                          # Scripts used to train the ML model
     └── pi                                                        # Scripts running on the RPi 1
         ├── model
-        │   ├── am
-        │   ├── conf
-        │   ├── graph
-        │   │   └── phones
-        │   └── ivector
-        └── usb_4_mic_array
+        │   ├── ...
+        │   └── ...
+        └── usb_4_mic_array                                       # Scripts related to audio processing with the mic array
             ├── single_frequency_sound_recognizance               # Scripts to recognize a single frequency sound in the case where the voice recognition model couldn't work
             └── test                                              # Unit tests
     README
