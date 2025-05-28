@@ -40,6 +40,8 @@ each part works well before moving to the next.
 
 https://github.com/user-attachments/assets/a82f1c71-6dc9-49f4-babd-78dbcbe76842
 
+https://github.com/epfl-cs358/2025sp-hexapolo/blob/main/resources/video_2025-05-28_01-32-29.mp4
+
 ### Hardware overview
 
 The Legs and mechanical links to control the legs :
