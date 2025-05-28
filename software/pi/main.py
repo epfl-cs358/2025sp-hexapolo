@@ -5,6 +5,7 @@ import sys
 from audio import get_doa_angle, play_wav
 from basic_movement import forward, turn
 from read_from_serial import SerialReader
+from calibrate_and_detect import calibrate, detect
 
 # Global flag for graceful shutdown
 shutdown_flag = False
@@ -45,13 +46,13 @@ def handle_command(command):
             direction = cmd[0].lower()
             if direction == "stop":
                 logger.info("Received STOP command, stopping follow mode")
+                play_wav(path="found.wav")
                 continue_follow = False 
             else:
                 angle = float(cmd[1])  # Convert angle to float
                 if direction == 'left':
                     angle *= -1
                 logger.info(f"Executing turn command: {direction} {angle}°")
-                # try this
                 turn(angle)
                 forward(3)
         else:
@@ -85,11 +86,12 @@ def main_control_loop():
     
     logger.info("Starting main robot control loop")
     logger.info("Robot will listen for audio DOA, turn toward sound, then follow movement commands")
+    play_wav(path="game.wav")
 
     try:
         while not shutdown_flag:
             try:
-                play_wav()
+                play_wav(path="Marco.wav")
                 doa = get_doa_angle()
                 if not doa:
                     logger.info("DOA loop interrupted, stopping main loop")
@@ -120,6 +122,9 @@ if __name__ == "__main__":
     logger = setup_logging()
     logger.info("Robot Control Service Starting...")
     logger.info("System: ESP32 Camera -> Laptop CV -> ESP32 -> Pi Robot Control")
+
+    play_wav("game.wav")
+    calibrate()
     
     try:
         main_control_loop()
