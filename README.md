@@ -1,7 +1,5 @@
 # 2025sp-hexapolo
 
-Contributors : **Zakaria Laribi, Nagyung Kim, Roméo Maignal & Tuan Dang Nguyen**
-
 ## Table of Contents
 
 - [Project Overview](#project-overview)
