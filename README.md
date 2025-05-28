@@ -136,7 +136,9 @@ Amoung the list of software requirements, you'll find program that are crucial t
 
 ## Installation
 
-`pip download --no-binary :all: -r .requirements.txt`
+```
+pip download --no-binary :all: -r .requirements.txt
+```
 
 ## Project Structure
 
