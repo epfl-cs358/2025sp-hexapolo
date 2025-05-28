@@ -26,6 +26,18 @@ can interact with people. The robot will also have optional features, like worki
 or avoiding obstacles using a lidar scanner. The work is divided into small steps to make sure
 each part works well before moving to the next.
 
+### Pictures
+
+| Front View                             | Back View                             |
+| -------------------------------------- | ------------------------------------- |
+| ![](resources/from%20the%20front.jpeg) | ![](resources/from%20the%20back.jpeg) |
+
+| Below View                       | Inside View                       |
+| -------------------------------- | --------------------------------- |
+| ![](resources/from%20below.jpeg) | ![](resources/from%20inside.jpeg) |
+
+### Videos
+
 https://github.com/user-attachments/assets/a82f1c71-6dc9-49f4-babd-78dbcbe76842
 
 ### Hardware overview
