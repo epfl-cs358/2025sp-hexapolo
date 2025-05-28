@@ -40,7 +40,7 @@ each part works well before moving to the next.
 
 https://github.com/user-attachments/assets/a82f1c71-6dc9-49f4-babd-78dbcbe76842
 
-https://github.com/user-attachments/assets/ddf52e5b-f97f-4ff6-8985-b9ae90d72b5c
+https://github.com/user-attachments/assets/c1124489-3593-4ca6-ac67-65d4f163be2c
 
 ### Hardware overview
 
@@ -119,11 +119,24 @@ The combined weight of all the cables and wires might be too heavy for the motor
 
 ## Software Requirements
 
+### OS
+
+- **Linux** running on your computer. Use whatever distro you prefer, nevertheless you might stumble into less trouble running a debian based distro.
+- **Linux (Debian)** running on the RPi1
+
+### Dependencies
+
 Due to the multiple features of our project, the use of computer vision and audio processing, a large, yet lightweight, set of dependencies need to be installed. They are all listed in the following file below :
 
 - [Dependencies List](software/requirements.txt)
 
+Amoung the list of software requirements, you'll find program that are crucial to make this project work.
+
+- **Minicom :** serial communication program used to run program in the Raspberry Pi from remote shell. This solution is heavily used and eliminates the need to connect additional peripherals to the RPi1 for control. [Minicon GitLab repository](https://salsa.debian.org/minicom-team/minicom)
+
 ## Installation
+
+`pip download --no-binary :all: -r .requirements.txt`
 
 ## Project Structure
 
