@@ -1,7 +1,5 @@
 # 2025sp-hexapolo
 
-Zakaria Laribi, Nagyung Kim, Roméo Maignal, Tuan Dang Nguyen
-
 ## Table of Contents
 
 - [Project Overview](#project-overview)
@@ -129,15 +127,15 @@ Due to the multiple features of our project, the use of computer vision and audi
 
 - [Dependencies List](software/requirements.txt)
 
-Amoung the list of software requirements, you'll find program that are crucial to make this project work. More specifically :
+Among the list of software requirements, you'll find program that are crucial to make this project work. More specifically :
 
 On Linux :
 
-- **Minicom :** serial communication program used to run program in the Raspberry Pi from remote shell. This solution is heavily used and eliminates the need to connect additional peripherals to the RPi1 for control. [Minicon GitLab repository](https://salsa.debian.org/minicom-team/minicom)
+- **Minicom :** serial communication program used to run program in the Raspberry Pi from remote shell. This solution is heavily used and eliminates the need to connect additional peripherals to the RPi1 for control. [Minicom GitLab repository](https://salsa.debian.org/minicom-team/minicom)
 
 On Windows :
 
-- **PuTTY**
+- **PuTTY :** SSH and telnet client for Windows plateform. [PuTTY website](https://www.putty.org/)
 
 ## Installation
 
@@ -184,7 +182,6 @@ The repository is organized as follows, important files have been highlighted:
         └── usb_4_mic_array                                       # Scripts related to audio processing with the mic array
             ├── single_frequency_sound_recognizance               # Scripts to recognize a single frequency sound in the case where the voice recognition model couldn't work
             └── test                                              # Unit tests
-    README
 
 ## License
 
