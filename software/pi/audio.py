@@ -10,7 +10,8 @@ from pathlib import Path
 AUDIO_DEVICE = "plughw:CARD=ArrayUAC10,DEV=0"  # Find with: arecord -L
 SAMPLE_RATE = 16000
 FRAME_MS = 30
-CHUNK_SIZE = int(SAMPLE_RATE * FRAME_MS / 1000)  # 480 samples for 30ms
+# CHUNK_SIZE = int(SAMPLE_RATE * FRAME_MS / 1000)  # 480 samples for 30ms
+CHUNK_SIZE = 205
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +25,12 @@ class AudioIn:
         )
 
     def read_frame(self):
-        return self.process.stdout.read(CHUNK_SIZE * 2)  # 16-bit samples
+        try:
+            return self.process.stdout.read(CHUNK_SIZE * 2)
+        except Exception as e:
+            logger.warning(f"Error reading audio frame: {e}")
+            return None
+
 
 def play_wav(path):
     subprocess.run(["aplay", "-q", "-D", AUDIO_DEVICE, path])

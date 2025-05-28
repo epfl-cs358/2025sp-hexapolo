@@ -63,7 +63,9 @@ def measure_phase(prompt, audio_file):
         logger.info('.', end='', flush=True)
 
     logger.info(" done.")
-    audio_in.process.terminate()
+    audio_in.process.stdout.close()
+    audio_in.process.wait()
+
     return energies
 
 def calibrate():
@@ -94,10 +96,10 @@ def calibrate():
     logger.info(f"  Max noise energy: {int(max_noise)}")
     logger.info(f"  Min tone energy:  {int(min_tone)}")
     logger.info(f"  Avg tone energy:  {int(avg_tone)}")
-    logger.info(f"\n✅ Suggested THRESHOLD: {int(suggested_threshold)}")
+    logger.info(f"\n✅ Suggested THRESHOLD: {int(threshold)}")
 
     logger.info("\nℹ️ Use this value in your detection script like:")
-    logger.info(f"   THRESHOLD = {int(suggested_threshold)}")
+    logger.info(f"   THRESHOLD = {int(threshold)}")
 
 def detect(audio_in):
     # -------- Detection flow --------
