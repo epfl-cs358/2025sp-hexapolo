@@ -8,6 +8,7 @@
 - [Software Requirements](#software-requirements)
 - [Installation](#installation)
 - [Project Structure](#project-structure)
+- [Acknowledgments](#Acknowledgments)
 - [License](#license)
 
 ## Project Overview
@@ -186,6 +187,10 @@ The repository is organized as follows, important files have been highlighted:
         └── usb_4_mic_array                                       # Scripts related to audio processing with the mic array
             ├── single_frequency_sound_recognizance               # Scripts to recognize a single frequency sound in the case where the voice recognition model couldn't work
             └── test                                              # Unit tests
+
+## Acknowledgments
+
+We drew inspiration for Pilotgeek's project ([YouTube video](https://www.youtube.com/watch?v=cc_Njp_cz18)) that demonstrated a similar concept of a six-legged robot. His work provided valuable insights and helped us build Hexapolo.
 
 ## License
 
