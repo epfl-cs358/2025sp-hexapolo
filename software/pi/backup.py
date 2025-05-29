@@ -7,7 +7,6 @@ from audio import get_doa_angle
 from play_wav import play_wav
 from basic_movement import forward, turn
 from read_from_serial import SerialReader
-from calibrate_and_detect import calibrate
 
 # Global flag for graceful shutdown
 shutdown_flag = False
@@ -85,7 +84,7 @@ def follow():
         serial_reader.send_message("stop")
         serial_reader.stop()
 
-def main_control_loop(threshold):
+def main_control_loop():
     logger = logging.getLogger(__name__)
     
     logger.info("Starting main robot control loop")
@@ -96,21 +95,12 @@ def main_control_loop(threshold):
         while not shutdown_flag:
             try:
                 play_wav(path="/home/hexapolo/project/Marco.wav")
-                doa = get_doa_angle(threshold)
-                if not doa:
-                    logger.info("DOA loop interrupted, stopping main loop")
+                sleep(0.5)
+                logger.info("Entering follow mode")
+                follow()
+                if shutdown_flag:
                     break
-                elif doa is not None:
-                    logger.info(f"DOA detected at {doa}°, turning toward sound source")
-                    turn(doa)
-                    sleep(0.5)
-                    logger.info("Entering follow mode")
-                    follow()
-                    if shutdown_flag:
-                        break
-                else:
-                    # No DOA detected, wait a bit before trying again
-                    sleep(2)
+                sleep(2)
             except Exception as e:
                 logger.error(f"Error in main control loop iteration: {e}")
                 sleep(1)  # Wait before retrying
@@ -128,8 +118,7 @@ if __name__ == "__main__":
     logger.info("System: ESP32 Camera -> Laptop CV -> ESP32 -> Pi Robot Control")
 
     try:
-        threshold = calibrate()
-        main_control_loop(threshold)
+        main_control_loop()
     except Exception as e:
         logger.error(f"Fatal error in robot control service: {e}")
         sys.exit(1)

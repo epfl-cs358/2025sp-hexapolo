@@ -3,6 +3,8 @@ import time
 import torch
 import logging
 import requests
+import numpy as np
+from datetime import datetime
 from flask import Flask, request, jsonify
 from ultralytics import YOLO
 
@@ -26,16 +28,23 @@ CAMERA_HFOV = 40  # Horizontal field of view in degrees
 TURN_THRESHOLD = 3 # Minimum angle difference to trigger a turn command
 MAX_TURN_ANGLE = 60 # Maximum turn angle to send
 
+run = False
+
 # Store the last received message from ESP32/Raspberry Pi
 last_received_message = ""
 
 @app.route('/esp32_message', methods=['GET', 'POST'])
 def handle_esp32_message():
+    global run
     global last_received_message
     if request.method == 'GET':
         return jsonify({"message": last_received_message})
     elif request.method == 'POST':
         last_received_message = request.json.get('text', '')
+        if last_received_message == "start":
+            run = True
+        elif last_received_message == "stop":
+            run = False
         print(f"\n[Pi]: {last_received_message}")
         return jsonify({"status": "success"})
 
@@ -107,7 +116,7 @@ def process_frame(frame):
 
         # Check if the detected person's frame takes up 60% or more of the screen
         person_area_percentage = (largest_area / frame_area) * 100
-        if person_area_percentage >= 50:
+        if person_area_percentage >= 60 and run:
             response = send_message("stop")
             print(f"[Laptop]: stop, ACK: {response}")
 
@@ -119,16 +128,18 @@ def process_frame(frame):
         turn_angle = relative_pos * (CAMERA_HFOV / 2)
 
         # Only send command if the offset is significant
-        if abs(turn_angle) > TURN_THRESHOLD and (prev_center is None or abs(best_center - prev_center) > 10):
+        if abs(turn_angle) > TURN_THRESHOLD and (prev_center is None or abs(best_center - prev_center) > 10) and run:
             # Limit maximum turn angle
             turn_angle = max(min(turn_angle, MAX_TURN_ANGLE), -MAX_TURN_ANGLE)
 
-            direction = 'right' if turn_angle > 0 else 'left'
+            direction = 'left' if turn_angle > 0 else 'right'
             command = f"{direction} {abs(turn_angle):.1f}"
 
             # Send the command
             response = send_message(command)
-            print(f"[Laptop]: {command} (offset: {pixels_from_center:.1f}px, {turn_angle:.1f}°)")
+            current_time = datetime.now()
+            formatted_time = current_time.strftime("%H:%M:%S") + f",{current_time.microsecond // 1000:03d}"
+            print(f"{formatted_time} [Laptop]: {command} (offset: {pixels_from_center:.1f}px, {turn_angle:.1f}°)")
 
         # Update previous center position
         prev_center = best_center
@@ -149,6 +160,7 @@ def send_message(text):
             params={"text": text},
             timeout=TIMEOUT_SECONDS
         )
+        # time.sleep(1)
         if response.status_code == 200:
             return response.text.strip()
         else:
@@ -179,7 +191,6 @@ if __name__ == '__main__':
             prev_time = time.time()
             cv2.putText(processed_frame, f"FPS: {fps:.2f}", (10, 30),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-
             cv2.imshow("ESP32 YOLO Detection", processed_frame)
 
             if cv2.waitKey(1) == 27:  # ESC to exit

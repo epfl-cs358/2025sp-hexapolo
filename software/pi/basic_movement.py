@@ -31,14 +31,14 @@ def turn(angle, speed=1):
     direction = 'CCW' if angle > 0 else 'CW'
     logger.info(f"Turning {direction} by {abs(angle)}° at speed {speed}")
 
-    turn_time = abs(angle) / 30 * 0.5  # 0.5s per 90 degrees
+    turn_time = abs(angle) / 50 * 0.5  # 0.5s per 90 degrees
     logger.debug(f"Calculated turn time: {turn_time:.2f} seconds")
 
     try:
         if angle > 0:
-            turn_motor.forward(speed)
-        else:
             turn_motor.backward(speed)
+        else:
+            turn_motor.forward(speed)
 
         sleep(turn_time)
         turn_motor.stop()

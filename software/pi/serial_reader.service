@@ -1,22 +1,22 @@
 [Unit]
 Description=Robot Control Service with ESP32 Communication
 After=sysinit.target local-fs.target
-Before=multi-user.target
-Wants=sysinit.target
+After=dev-ttyUSB0.device
 Conflicts=serial-getty@ttyUSB0.service
 
 [Service]
 Type=simple
-User=pi
-Group=dialout
-WorkingDirectory=/home/pi/software/pi
-ExecStart=/usr/bin/python3 /home/pi/software/pi/main.py
-ExecStartPre=/bin/bash -c 'if pgrep minicom > /dev/null; then echo "Warning: minicom is running, stopping it"; pkill minicom; sleep 2; fi'
+# Run as root by removing User/Group directives
+WorkingDirectory=/home/hexapolo/project
+ExecStart=/usr/bin/python3 /home/hexapolo/project/main.py
 Restart=always
 RestartSec=10
 StandardOutput=journal
 StandardError=journal
 Environment=PYTHONUNBUFFERED=1
+
+# Remove SupplementaryGroups (root doesn't need GPIO group permissions)
+UMask=0002
 
 [Install]
 WantedBy=multi-user.target
