@@ -153,6 +153,10 @@ On your laptop :
 pip install -r requirements.txt
 ```
 
+## Launching and setting up the autonomous behavior
+
+...
+
 ## Project Structure
 
 The repository is organized as follows, important files have been highlighted:
