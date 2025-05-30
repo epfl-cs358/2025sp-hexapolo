@@ -43,8 +43,6 @@ def handle_esp32_message():
         last_received_message = request.json.get('text', '')
         if last_received_message == "start":
             run = True
-        elif last_received_message == "stop":
-            run = False
         print(f"\n[Pi]: {last_received_message}")
         return jsonify({"status": "success"})
 
@@ -63,6 +61,7 @@ movement_threshold = 50  # Pixels for movement detection
 
 def process_frame(frame):
     global prev_center
+    global run
 
     frame_height, frame_width, _ = frame.shape
     frame_area = frame_width * frame_height
@@ -119,6 +118,7 @@ def process_frame(frame):
         if person_area_percentage >= 60 and run:
             response = send_message("stop")
             print(f"[Laptop]: stop, ACK: {response}")
+            run = False
 
         # Calculate how far off center the person is
         pixels_from_center = best_center - frame_center
@@ -141,7 +141,7 @@ def process_frame(frame):
             formatted_time = current_time.strftime("%H:%M:%S") + f",{current_time.microsecond // 1000:03d}"
             print(f"{formatted_time} [Laptop]: {command} (offset: {pixels_from_center:.1f}px, {turn_angle:.1f}°)")
 
-        # Update previous center position
+        # Updte previous center position
         prev_center = best_center
 
         # Draw visualization elements

@@ -27,6 +27,8 @@ def turn(angle, speed=1):
     # Shortest turn
     if angle > 180:
         angle -= 360
+    elif angle < -180:
+        angle += 360
     
     direction = 'CCW' if angle > 0 else 'CW'
     logger.info(f"Turning {direction} by {abs(angle)}° at speed {speed}")

@@ -52,13 +52,15 @@ def read_chunk(process):
     return struct.unpack('<' + 'h' * CHUNK_SIZE, data)
 
 # Function to measure energy in a phase
-def measure_phase(prompt, audio_file, process):
+def measure_phase(prompt, process, tone=False):
     logger.info(f"\n🔊 {prompt}")
-    play_wav(audio_file)
 
-    for file in countdown_files:
-        play_wav(file)
-        time.sleep(0.5)
+    if tone:
+        play_wav("/home/hexapolo/project/cal.wav")
+
+        for file in countdown_files:
+            play_wav(file)
+            time.sleep(0.5)
 
     logger.info("Measuring...")
 
@@ -90,10 +92,10 @@ def calibrate():
         logger.info(f"Sample rate: {SAMPLE_RATE} Hz, Chunk size: {CHUNK_SIZE} samples\n")
 
         # Phase 1: background noise
-        noise_energies = measure_phase("Ensure no tone is playing (just background noise).", f"{DIR}/cal.wav", process)
+        noise_energies = measure_phase("Ensure no tone is playing (just background noise).", process)
 
         # Phase 2: tone signal
-        tone_energies = measure_phase("Now play the tone at target frequency.", f"{DIR}/calwtone.wav", process)
+        tone_energies = measure_phase("Now play the tone at target frequency.", process, True)
 
         # Analyze and suggest threshold
         avg_noise = sum(noise_energies) / (len(noise_energies) + EPS)

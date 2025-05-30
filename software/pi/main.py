@@ -48,7 +48,6 @@ def handle_command(command):
             direction = cmd[0].lower()
             if direction == "stop":
                 logger.info("Received STOP command, stopping follow mode")
-                play_wav(path="/home/hexapolo/project/found.wav")
                 continue_follow = False 
             else:
                 angle = float(cmd[1])  # Convert angle to float
@@ -90,7 +89,6 @@ def main_control_loop(threshold):
     
     logger.info("Starting main robot control loop")
     logger.info("Robot will listen for audio DOA, turn toward sound, then follow movement commands")
-    play_wav(path="/home/hexapolo/project/game.wav")
 
     try:
         while not shutdown_flag:

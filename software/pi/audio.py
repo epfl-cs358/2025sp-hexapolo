@@ -24,9 +24,9 @@ def get_doa_angle(threshold):
     try:
         while True:
             if detect(threshold):
-                angle = (tuning.direction + 90) % 360
+                angle = (tuning.direction + 163) % 360
                 logger.info(f"Wake word detected! Angle: {angle}°")
-                play_wav("hear.wav")
+                play_wav("/home/hexapolo/project/hear.wav")
                 return angle
     except KeyboardInterrupt:
         logger.info("\nStopped by user")
