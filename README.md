@@ -48,6 +48,7 @@ https://github.com/user-attachments/assets/ddf52e5b-f97f-4ff6-8985-b9ae90d72b5c
 Watch Hexapolo in action:
 
 <iframe width="560" height="315" src="https://youtube.com/shorts/G5ZAEMDvShg" title="Hexapolo Demo" frameborder="0" allowfullscreen></iframe>
+
 ### Hardware overview
 
 The Legs and mechanical links to control the legs :
