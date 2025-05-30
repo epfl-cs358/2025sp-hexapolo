@@ -20,10 +20,8 @@ came from. Then, it turns to face that direction and checks with its camera if a
 If it sees someone, it walks toward them and stops when it is about one meter away. After that,
 the robot will follow the person as they move.
 
-The project’s goal is to combine sound detection, camera vision, and motor control so the robot
-can interact with people. The robot will also have optional features, like working in a noisy room
-or avoiding obstacles using a lidar scanner. The work is divided into small steps to make sure
-each part works well before moving to the next.
+The project’s goal was to combine sound detection, camera vision, and motor control so the robot
+can interact with people.
 
 ### Pictures
 
