@@ -49,10 +49,7 @@ https://github.com/user-attachments/assets/ddf52e5b-f97f-4ff6-8985-b9ae90d72b5c
 
 ### Demo Video
 
-<div style="position: relative; padding-bottom: 56.25%; height: 0;">
-  <iframe src="https://youtube.com/shorts/G5ZAEMDvShg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" frameborder="0" allowfullscreen></iframe>
-</div>
-[![Watch the video](https://img.youtube.com/vi/_5tFXJQIzi4/0.jpg)](https://www.youtube.com/watch?v=_5tFXJQIzi4)
+[![Watch the video](resources/thumbnail.jpeg)](https://youtube.com/shorts/G5ZAEMDvShg)
 
 ### Hardware overview
 
