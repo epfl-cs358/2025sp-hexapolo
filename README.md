@@ -42,9 +42,11 @@ each part works well before moving to the next.
 ### Videos
 
 Video clip of hexapolo having its first steps
+
 https://github.com/user-attachments/assets/a82f1c71-6dc9-49f4-babd-78dbcbe76842
 
 Video clip of hexapolo tracking a person
+
 https://github.com/user-attachments/assets/ddf52e5b-f97f-4ff6-8985-b9ae90d72b5c
 
 ### Demo Video
