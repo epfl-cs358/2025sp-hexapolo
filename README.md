@@ -35,6 +35,10 @@ each part works well before moving to the next.
 | -------------------------------- | --------------------------------- |
 | ![](resources/from%20below.jpeg) | ![](resources/from%20inside.jpeg) |
 
+| Live Video Feed from the Esp32Cam   |
+| ----------------------------------- |
+| ![](resources/camera_live_feed.png) |
+
 ### Videos
 
 Video clip of hexapolo having its first steps
@@ -45,9 +49,9 @@ https://github.com/user-attachments/assets/ddf52e5b-f97f-4ff6-8985-b9ae90d72b5c
 
 ### Demo Video
 
-Watch Hexapolo in action:
-
-<iframe width="560" height="315" src="https://youtube.com/shorts/G5ZAEMDvShg" title="Hexapolo Demo" frameborder="0" allowfullscreen></iframe>
+<div style="position: relative; padding-bottom: 56.25%; height: 0;">
+  <iframe src="https://www.youtube.com/embed/G5ZAEMDvShg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" frameborder="0" allowfullscreen></iframe>
+</div>
 
 ### Hardware overview
 
