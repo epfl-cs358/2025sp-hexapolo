@@ -35,11 +35,23 @@ each part works well before moving to the next.
 | -------------------------------- | --------------------------------- |
 | ![](resources/from%20below.jpeg) | ![](resources/from%20inside.jpeg) |
 
+| Live Video Feed from the Esp32Cam   |
+| ----------------------------------- |
+| ![](resources/camera_live_feed.png) |
+
 ### Videos
+
+Video clip of hexapolo having its first steps :
 
 https://github.com/user-attachments/assets/a82f1c71-6dc9-49f4-babd-78dbcbe76842
 
+Video clip of hexapolo tracking a person :
+
 https://github.com/user-attachments/assets/ddf52e5b-f97f-4ff6-8985-b9ae90d72b5c
+
+### Demo Video
+
+[![Watch the video](resources/thumbnail.jpeg)](https://youtube.com/shorts/G5ZAEMDvShg)
 
 ### Hardware overview
 
